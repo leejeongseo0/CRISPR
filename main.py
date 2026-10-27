@@ -169,4 +169,11 @@ def calculate_scores(sequence: str):
     doench_score = max(10, 100 - (abs(gc_content - 50) * 2.8))
 
     seed_region = seq[10:]
-    seed_gc =
+    seed_gc = ((seed_region.count('G') + seed_region.count('C')) / 10) * 100
+    mit_score = max(15, 95 - abs(seed_gc - 50) * 1.5)
+
+    return {
+        "GC_Ratio": round(gc_content, 1),
+        "Doench_Score": round(doench_score, 1),
+        "MIT_Score": round(mit_score, 1)
+    }
