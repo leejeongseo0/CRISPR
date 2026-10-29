@@ -479,7 +479,6 @@ function build(){
     el("line", {x1: cx, x2: cx, y1: YT + 11, y2: YB - 11, stroke: "#3b5a75", "stroke-width": 2}, g);
     tile(g, "b", cx, YB, COMP[ch], COLORS[COMP[ch]]);
     var tt = tile(g, "t", cx, YT, ch, COLORS[ch]);
-    (function(idx){ tt.addEventListener("click", function(){ onFind(idx); }); })(i);
     if (i >= FL && i < FL + 20){
       tile(g, "r", cx, YT, ch === "T" ? "U" : ch, "#ff9a2e");
     }
@@ -514,12 +513,13 @@ function build(){
   cutLine = el("line", {x1: CUT_X, x2: CUT_X, y1: YT - 64, y2: YB + 18, stroke: "#ffe14d",
     "stroke-width": 3, "stroke-dasharray": "6 4", opacity: 0}, svg);
   hintEl = el("ellipse", {cx: TARGET_X, cy: CAS_BOUND_Y, rx: 112, ry: 56, fill: "none", stroke: "#3ddc84",
-    "stroke-width": 2, "stroke-dasharray": "8 6", opacity: 0, "class": "pulse"}, svg);
+    "stroke-width": 2, "stroke-dasharray": "8 6", visibility: "hidden", "class": "pulse"}, svg);
   scanner = el("line", {x1: 0, x2: 0, y1: 0, y2: 0, stroke: "#3ddc84", "stroke-width": 2,
     "stroke-dasharray": "3 4", opacity: 0}, svg);
 
   cas = makeCas9();
   gr = makeGRNA();
+  [protoBox, pamBox, pamLbl, hintEl, scanner, cutLine, banner].forEach(function(n){ n.style.pointerEvents = "none"; });
 
   setStep(0);
   setMsg("아래 DNA에서 위쪽 «찾을 서열»과 똑같은 20글자 구간을 찾아, 그 구간의 글자 아무거나 하나를 클릭하세요.");
@@ -638,7 +638,7 @@ function onFind(i){
     pamBox.setAttribute("opacity", 1);
     pamBox.setAttribute("class", "pulse");
     pamLbl.setAttribute("opacity", 1);
-    hintEl.setAttribute("opacity", 0);
+    hintEl.setAttribute("visibility", "hidden");
     setStep(1);
     setMsg("정답! 초록 상자가 gRNA와 같은 20글자이고, 바로 뒤 주황 상자(" + PAM + ")가 PAM이에요. 이제 gRNA를 Cas9에 끌어다 붙여 RNP를 만드세요.", "good");
     setCtrl([{label: "힌트", fn: hint}]);
@@ -751,7 +751,7 @@ function onCasDrop(x, y){
 
 function bindTarget(){
   state = "busy";
-  hintEl.setAttribute("opacity", 0);
+  hintEl.setAttribute("visibility", "hidden");
   pamBox.setAttribute("class", "");
   setCtrl([]);
   tween(cas, TARGET_X, CAS_BOUND_Y, 450, function(){
@@ -884,10 +884,18 @@ function hint(){
     cas.classList.add("glow");
     setTimeout(function(){ cas.classList.remove("glow"); }, 1500);
   } else if (state === "dock"){
-    hintEl.setAttribute("opacity", 0.9);
+    hintEl.setAttribute("visibility", "visible");
     setMsg("힌트: 점선 타원 안으로 RNP를 옮기세요. 오른쪽 끝이 주황색 PAM 상자에 닿아야 해요.");
   }
 }
+
+svg.addEventListener("pointerup", function(e){
+  if (state !== "find") return;
+  var p = svgPt(e);
+  if (Math.abs(p.y - YT) > 16) return;
+  var i = Math.floor((p.x - X0) / DX);
+  if (i >= 0 && i < N) onFind(i);
+});
 
 build();
 })();
