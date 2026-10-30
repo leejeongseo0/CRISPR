@@ -54,88 +54,94 @@ st.markdown("""
         font-family: 'NanumSquareRound', sans-serif !important;
     }
 
+    /* ===== DNA Lab 테마: 깊은 남청색 + gRNA 주황 + Cas9 초록 ===== */
     .stApp {
-        background-color: #FFF0F5;
-        color: #2D3748;
+        background: linear-gradient(180deg, #0d1b26 0%, #0f2433 100%);
     }
 
     h1 {
-        color: #4A154B !important;
+        color: #e8f1f5 !important;
         font-weight: 800;
         font-size: 2.2rem !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        letter-spacing: -0.5px;
     }
     h2, h3, h4 {
-        color: #4A154B !important;
+        color: #cfe9f3 !important;
         font-weight: 700;
     }
-    p, span, label {
-        color: #2D3748 !important;
+
+    /* 구분선: DNA 염기(A, T, G, C) 네 가지 색 띠 */
+    hr {
+        border: none !important;
+        height: 4px !important;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #ff8fa3 0%, #ffd166 33%, #67e3a5 66%, #74c0ff 100%) !important;
+        opacity: 0.85;
     }
 
     [data-testid="stSidebar"] {
-        background-color: #FFF5F7 !important;
-        border-right: 2px solid #FCE7F3;
+        background-color: #0f2433 !important;
+        border-right: 1px solid #24465e;
     }
 
     .custom-card {
-        background-color: #FFFFFF;
-        border: 2px solid #FBCFE8;
-        border-radius: 20px;
+        background-color: #14293a;
+        border: 1.5px solid #24465e;
+        border-left: 5px solid #ff9a2e;
+        border-radius: 16px;
         padding: 22px;
         margin-bottom: 20px;
-        box-shadow: 0 8px 16px rgba(244, 114, 182, 0.15);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
     }
 
     .badge-best {
-        background-color: #FCE7F3;
-        color: #DB2777 !important;
+        background-color: rgba(255, 154, 46, 0.16);
+        color: #ffb85c !important;
+        border: 1px solid rgba(255, 154, 46, 0.5);
         padding: 6px 14px;
         border-radius: 15px;
         font-size: 0.85rem;
         font-weight: 800;
         display: inline-block;
         margin-bottom: 8px;
-        box-shadow: 0 2px 4px rgba(219, 39, 119, 0.1);
     }
 
     div[data-testid="stMetric"] {
-        background-color: #FFFFFF;
-        border: 2px solid #FBCFE8;
+        background-color: #14293a;
+        border: 1.5px solid #24465e;
+        border-top: 3px solid #3ddc84;
         padding: 16px;
-        border-radius: 18px;
-        box-shadow: 0 6px 12px rgba(244, 114, 182, 0.12);
+        border-radius: 14px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
     }
 
     .stButton>button, .stDownloadButton>button {
-        background-color: #EC4899 !important;
-        color: #FFFFFF !important;
-        border-radius: 14px !important;
+        background-color: #ff9a2e !important;
+        color: #2a1700 !important;
+        border-radius: 12px !important;
         border: none !important;
         font-weight: 700 !important;
         padding: 12px 24px !important;
-        box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+        box-shadow: 0 4px 12px rgba(255, 154, 46, 0.25);
         transition: all 0.2s ease;
     }
     .stButton>button:hover, .stDownloadButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(236, 72, 153, 0.4);
-        background-color: #DB2777 !important;
+        box-shadow: 0 6px 16px rgba(255, 154, 46, 0.4);
+        background-color: #ffb85c !important;
     }
-    /* 위의 'p, span, label' 규칙 때문에 버튼 글자가 어두워지는 것을 방지 */
     .stButton>button p, .stDownloadButton>button p,
     .stButton>button span, .stDownloadButton>button span {
-        color: #FFFFFF !important;
+        color: #2a1700 !important;
     }
 
-    div[data-baseweb="slider"] div {
-        background-color: #EC4899 !important;
+    textarea, input {
+        border-radius: 10px !important;
     }
-
     textarea {
-        border-radius: 12px !important;
-        border: 1.5px solid #FBCFE8 !important;
-        background-color: #FFFFFF !important;
+        border: 1.5px solid #24465e !important;
+        background-color: #0d1b26 !important;
+        font-family: ui-monospace, Consolas, 'D2Coding', monospace !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -229,20 +235,20 @@ def create_pdf_report(df_results, top_cand, gene_name, source_text, mit_w, doenc
         df_results["효율성 (Doench)"],
         df_results["안전성 (MIT)"],
         c=df_results["종합 점수"],
-        cmap="PuRd",
+        cmap="YlGnBu",
         s=df_results["종합 점수"] * 2.5,
         alpha=0.8,
-        edgecolors="#EC4899"
+        edgecolors="#0b6b5c"
     )
 
     for _, row in df_results.iterrows():
         ax.annotate(row["후보명"], (row["효율성 (Doench)"], row["안전성 (MIT)"]),
-                    fontsize=8, ha='center', va='bottom', color='#4A154B', fontweight='bold')
+                    fontsize=8, ha='center', va='bottom', color='#0b3a4a', fontweight='bold')
 
     ax.set_xlim(0, 105)
     ax.set_ylim(0, 105)
-    ax.set_xlabel("Doench Score (Efficiency)", fontsize=9, color='#4A154B')
-    ax.set_ylabel("MIT Score (Safety)", fontsize=9, color='#4A154B')
+    ax.set_xlabel("Doench Score (Efficiency)", fontsize=9, color='#0b3a4a')
+    ax.set_ylabel("MIT Score (Safety)", fontsize=9, color='#0b3a4a')
     ax.grid(True, linestyle="--", alpha=0.4)
     plt.colorbar(scatter, ax=ax, label="Total Score")
     plt.tight_layout()
@@ -262,9 +268,9 @@ def create_pdf_report(df_results, top_cand, gene_name, source_text, mit_w, doenc
     )
 
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontName=font_name, fontSize=20, leading=24, textColor=colors.HexColor('#4A154B'), spaceAfter=10)
-    h2_style = ParagraphStyle('DocH2', parent=styles['Heading2'], fontName=font_name, fontSize=13, leading=16, textColor=colors.HexColor('#EC4899'), spaceBefore=12, spaceAfter=6)
-    body_style = ParagraphStyle('DocBody', parent=styles['Normal'], fontName=font_name, fontSize=9, leading=13, textColor=colors.HexColor('#2D3748'))
+    title_style = ParagraphStyle('DocTitle', parent=styles['Heading1'], fontName=font_name, fontSize=20, leading=24, textColor=colors.HexColor('#0b3a4a'), spaceAfter=10)
+    h2_style = ParagraphStyle('DocH2', parent=styles['Heading2'], fontName=font_name, fontSize=13, leading=16, textColor=colors.HexColor('#d9730d'), spaceBefore=12, spaceAfter=6)
+    body_style = ParagraphStyle('DocBody', parent=styles['Normal'], fontName=font_name, fontSize=9, leading=13, textColor=colors.HexColor('#1f2d3a'))
 
     elements = []
     elements.append(Paragraph("gRNA Clinical Screening Summary Report", title_style))
@@ -282,11 +288,11 @@ def create_pdf_report(df_results, top_cand, gene_name, source_text, mit_w, doenc
 
     t_summary = Table(summary_data, colWidths=[150, 390])
     t_summary.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FCE7F3')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#DB2777')),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#DDF0EC')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#0b6b5c')),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#FBCFE8')),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#BFD8D2')),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('TOPPADDING', (0, 0), (-1, -1), 6),
     ]))
@@ -319,8 +325,8 @@ def create_pdf_report(df_results, top_cand, gene_name, source_text, mit_w, doenc
 
     t_results = Table(table_data, colWidths=[35, 120, 180, 65, 65, 75])
     t_results.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FFF0F5')),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#FBCFE8')),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#EEF7F5')),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#BFD8D2')),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
@@ -563,12 +569,12 @@ if ready:
         st.markdown(f"""
         <div class="custom-card">
             <span class="badge-best">🏆 TOP CANDIDATE</span>
-            <h3 style="margin: 6px 0 12px 0;">{top['후보명']} <span style="font-size:0.95rem; color:#64748B;">({top['Sequence']}{pam_text})</span></h3>
-            <p style="margin:0; font-size:1rem; color:#334155;">
+            <h3 style="margin: 6px 0 12px 0;">{top['후보명']} <span style="font-size:0.95rem; color:#8fa6b5;">({top['Sequence']}{pam_text})</span></h3>
+            <p style="margin:0; font-size:1rem; color:#cfe3ee;">
                 <b>GC 함량:</b> {top['GC 함량 (%)']}% &nbsp;|&nbsp;
                 <b>안전성 점수:</b> {top['안전성 (MIT)']}점 &nbsp;|&nbsp;
                 <b>효율성 점수:</b> {top['효율성 (Doench)']}점 &nbsp;|&nbsp;
-                <b>최종 종합 점수:</b> <span style="color:#EC4899; font-weight:800; font-size:1.1rem;">{top['종합 점수']}점</span>
+                <b>최종 종합 점수:</b> <span style="color:#ff9a2e; font-weight:800; font-size:1.1rem;">{top['종합 점수']}점</span>
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -588,17 +594,21 @@ if ready:
             color="종합 점수",
             hover_name="후보명",
             text="후보명",
-            color_continuous_scale="PuRd",
+            color_continuous_scale=["#1b6f8a", "#3ddc84", "#ffd166", "#ff9a2e"],
             range_x=[0, 105],
             range_y=[0, 105]
         )
-        fig.update_traces(textposition='top center')
+        fig.update_traces(textposition='top center', textfont=dict(color='#e8f1f5'),
+                          marker=dict(line=dict(width=1, color='#0d1b26')))
         fig.update_layout(
             height=460,
-            paper_bgcolor='#FFF0F5',
-            plot_bgcolor='#FFFFFF',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='#0f2433',
+            font=dict(color='#e8f1f5'),
             margin=dict(l=20, r=20, t=20, b=20)
         )
+        fig.update_xaxes(gridcolor='#24465e', zerolinecolor='#24465e')
+        fig.update_yaxes(gridcolor='#24465e', zerolinecolor='#24465e')
 
         with tab1:
             st.plotly_chart(fig, use_container_width=True)
