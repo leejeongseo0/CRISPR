@@ -1,7 +1,7 @@
-import streamlit as st
+ import streamlit as st
 import pandas as pd
 import plotly.express as px
-import matplotlib
+ import matplotlib
 matplotlib.use("Agg")  # 서버(화면 없는 환경)에서도 그래프를 그릴 수 있게 설정
 import matplotlib.pyplot as plt
 import random
@@ -26,8 +26,8 @@ from ncbi_utils import NCBI_GENES, fetch_refseq_fasta, find_candidates
 LAB_PAGE_PATH = "pages/2_실습실.py"
 
 MODE_NCBI = "🧬 NCBI 실제 서열로 설계"
-MODE_MANUAL = "✍️ 직접 입력 (연습용)"
-CUSTOM_LABEL = "직접 번호 입력 (RefSeq)"
+MODE_MANUAL = "예시 데이터"
+CUSTOM_LABEL = "✍️직접 입력"
 
 # -----------------------------------------------------------------------------
 # 1. 페이지 기본 설정
