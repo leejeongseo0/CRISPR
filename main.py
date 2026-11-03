@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
- import matplotlib
+import matplotlib
 matplotlib.use("Agg")  # 서버(화면 없는 환경)에서도 그래프를 그릴 수 있게 설정
 import matplotlib.pyplot as plt
 import random
