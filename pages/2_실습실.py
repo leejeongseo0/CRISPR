@@ -68,6 +68,17 @@ def build_config():
     if not spacer:
         spacer, demo = DEMO_SPACER, True
 
+    # 1페이지(NCBI 모드)에서 넘어온 실제 서열 정보
+    if not pam:
+        p = _clean(d.get("PAM", ""))
+        if len(p) == 3 and p[1:] == "GG":
+            pam = p
+    left = _clean(d.get("left", ""))
+    right = _clean(d.get("right", ""))
+    real = (not demo) and len(left) == 8 and len(right) == 6 and len(pam) == 3
+    if not real:
+        left, right = "", ""
+
     gene = ""
     for k, v in d.items():
         if "gene" in str(k).lower():
@@ -85,6 +96,13 @@ def build_config():
         "mit": _find_number(d, "mit"),
         "doench": _find_number(d, "doench"),
         "demo": demo,
+        "real": real,
+        "left": left,
+        "right": right,
+        "accession": str(d.get("accession", "")),
+        "strand": str(d.get("strand", "")),
+        "start": d.get("start") if isinstance(d.get("start"), (int, float)) else None,
+        "end": d.get("end") if isinstance(d.get("end"), (int, float)) else None,
         "seed": st.session_state["lab_seed"],
     }
 
@@ -320,7 +338,10 @@ function randSeq(n){ var s = ""; for (var i = 0; i < n; i++) s += randBase(); re
 
 var SP = CFG.spacer;
 var PAM = (CFG.pam && CFG.pam.length === 3) ? CFG.pam : (randBase() + "GG");
-var FULL = randSeq(FL) + SP + PAM + randSeq(FR);
+var REAL = !!(CFG.real && CFG.left && CFG.right && CFG.left.length === FL && CFG.right.length === FR);
+var LEFT = REAL ? CFG.left : randSeq(FL);
+var RIGHT = REAL ? CFG.right : randSeq(FR);
+var FULL = LEFT + SP + PAM + RIGHT;
 var N = FULL.length;
 var X0 = (W - N * DX) / 2;
 var TARGET_X = X0 + (FL + 11.5) * DX;
@@ -450,6 +471,7 @@ function build(){
   if (CFG.mit !== null && CFG.mit !== undefined) extra += " · MIT " + CFG.mit;
   if (CFG.doench !== null && CFG.doench !== undefined) extra += " · Doench " + CFG.doench;
   if (CFG.demo) extra += " (예시 서열)";
+  if (REAL) extra += " · NCBI " + CFG.accession + " " + CFG.start + "-" + CFG.end + (CFG.strand === "-" ? " (반대 가닥)" : " (코딩 가닥)");
   tg.appendChild(document.createTextNode(extra));
 
   // 배경: 세포 밖 / 세포 / 핵
@@ -463,7 +485,9 @@ function build(){
   el("rect", {x: 14, y: NUC_TOP, width: 872, height: 312, rx: 22, fill: "#0f2c3d", stroke: "#4aa8a0",
     "stroke-width": 2, "stroke-dasharray": "8 5"}, svg);
   var t3 = el("text", {x: 30, y: NUC_TOP + 24, "class": "cap"}, svg);
-  t3.textContent = "세포핵 · 게놈 DNA (" + CFG.gene + ")";
+  t3.textContent = REAL
+    ? "세포핵 · " + CFG.gene + " 실제 서열 (NCBI " + CFG.accession + ", " + CFG.start + "-" + CFG.end + ")"
+    : "세포핵 · DNA (" + CFG.gene + ", 주변 서열은 가상)";
 
   // DNA
   gDNA = el("g", {}, svg);
@@ -963,6 +987,17 @@ if cfg["demo"]:
         "1페이지에서 선택된 gRNA가 없어 예시 서열로 실습합니다. "
         "스크리닝 도구에서 후보를 고르면 그 서열로 이어집니다."
     )
+elif cfg["real"]:
+    st.success(
+        f"NCBI RefSeq {cfg['accession']} 실제 서열의 {cfg['start']}-{cfg['end']}번 위치로 실습합니다. "
+        "화면의 DNA 글자는 모두 실제 염기서열입니다."
+    )
+    st.caption(
+        "이 서열은 RefSeq 전사체(mRNA의 cDNA) 서열입니다. 실제 게놈 DNA에는 중간에 인트론이 있지만, "
+        "엑손 안에 있는 표적이라면 글자가 같습니다."
+    )
+else:
+    st.caption("직접 입력한 서열이라 표적 20글자 외의 주변 DNA는 설명을 위한 가상 서열입니다.")
 
 show_guide = st.session_state.get("show_guide", False)
 st.button(

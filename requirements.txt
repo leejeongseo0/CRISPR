@@ -1,4 +1,7 @@
+streamlit
+pandas
 plotly
-requests
-reportlab
 matplotlib
+reportlab
+requests
+tzdata
