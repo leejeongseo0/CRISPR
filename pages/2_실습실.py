@@ -840,7 +840,7 @@ function doCut(){
     setMsg("DNA 두 가닥이 모두 끊어졌어요(이중가닥절단, DSB). PAM에서 3글자 앞이 잘렸습니다. 세포는 곧 수리를 시작해요. 어떤 방법으로 고쳐지게 할까요?", "good");
     setCtrl([
       {label: "NHEJ:비상동 말단 연결 (급하게 이어 붙이기)", cls: "main", fn: function(){ repair("nhej"); }},
-      {label: "HDR (설계도를 보고 정확히 고치기)", fn: function(){ repair("hdr"); }}
+      {label: "HDR:상동인도복구 (설계도를 보고 정확히 고치기)", fn: function(){ repair("hdr"); }}
     ]);
   }, 1300);
 }
