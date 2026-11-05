@@ -477,7 +477,7 @@ else:  # 직접 입력 (연습용)
 
     st.sidebar.button(
         "🎲 다른 예시 데이터 불러오기",
-        use_container_width=True,
+        width="stretch",
         on_click=change_random_example_data
     )
 
@@ -579,7 +579,7 @@ if ready:
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("🧪 이 gRNA 후보로 유전자 편집 실습 시작하기", use_container_width=True):
+        if st.button("🧪 이 gRNA 후보로 유전자 편집 실습 시작하기", width="stretch"):
             st.switch_page(LAB_PAGE_PATH)
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -611,10 +611,10 @@ if ready:
         fig.update_yaxes(gridcolor='#24465e', zerolinecolor='#24465e')
 
         with tab1:
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         with tab2:
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width="stretch")
             csv = df.to_csv(index=False).encode('utf-8-sig')
             st.download_button("📥 스크리닝 결과 CSV 다운로드", data=csv, file_name="screening_results.csv", mime="text/csv")
 
@@ -623,7 +623,7 @@ if ready:
 
         col_pdf1, col_pdf2 = st.columns([2, 5])
         with col_pdf1:
-            if st.button("📑 PDF 요약 리포트 생성", use_container_width=True):
+            if st.button("📑 PDF 요약 리포트 생성", width="stretch"):
                 with st.spinner("그래프 이미지 포함 PDF 리포트를 생성하는 중입니다..."):
                     st.session_state["pdf_bytes"] = create_pdf_report(
                         df, top, gene_label, source_text, mit_weight, doench_weight, min_mit_cutoff
