@@ -196,6 +196,17 @@ svg{width:100%;height:auto;display:block;border-radius:12px;background:#0a1620;t
 .seq .m{background:var(--rna);color:#2a1700;border-radius:2px}
 .seq .del{background:var(--bad);color:#2a0008;border-radius:2px}
 .lbl{font-size:12px;color:var(--mute);margin-top:8px}
+.quiz{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.quiz h2{margin:0 0 4px;font-size:17px}
+.qq{margin:14px 0 6px;font-size:14px;font-weight:700;line-height:1.55}
+.qopt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;border:1px solid var(--line);
+  background:#0f2433;color:var(--ink);border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
+.qopt:hover{border-color:var(--dna1)}
+.qopt.ok{border-color:var(--cas);background:#123a2b}
+.qopt.no{border-color:var(--bad);background:#3a1620}
+.qopt:disabled{cursor:default}
+.qwhy{font-size:13px;color:#bcd3e0;margin:4px 0 0;line-height:1.6}
+.qscore{margin-top:12px;font-weight:700}
 
 @media (prefers-reduced-motion: reduce){
   .base,.base .t,.base .r{transition:none}
@@ -395,6 +406,7 @@ function removeLater(node, ms){
 
 /* ---------- 상태 ---------- */
 var state, penalty, cur = 0, pending = null;
+var quizRight = 0, quizAnswered = 0;
 var cas, gr, gDNA, cutLine, hintEl, protoBox, pamBox, pamLbl, scanner, banner, bases;
 var explainMode = "";   // "", "step", "all"
 
@@ -467,7 +479,7 @@ function build(){
   Array.prototype.slice.call(svg.children).forEach(function(c){
     if (c.tagName.toLowerCase() !== "defs") svg.removeChild(c);
   });
-  state = "find"; penalty = 0; bases = []; pending = null;
+  state = "find"; penalty = 0; bases = []; pending = null; quizRight = 0; quizAnswered = 0;
   resEl.innerHTML = "";
   svg.classList.add("finding");
 
@@ -897,10 +909,88 @@ function showResult(){
     "<p>" + pending.body + "</p>" +
     "<p>실제 연구에서는 이 결과를 바탕으로 편집된 세포의 비율(편집 효율)을 계산하고, 엉뚱한 곳이 바뀌지 않았는지(오프타깃)도 함께 검사합니다.</p>" +
     "<p><b>실습 점수 " + score + "점</b> · 틀린 시도 " + penalty + "회 · " + grade + "</p></div>";
+  renderQuiz();
   setStep(7);
   setMsg("실습 완료! NHEJ와 HDR 결과가 어떻게 다른지 다시 해 보며 비교해 보세요.", "good");
   setCtrl([{label: "처음부터 다시 하기", cls: "main", fn: build}]);
   resEl.scrollIntoView({behavior: "smooth", block: "nearest"});
+}
+
+/* =====================================================================
+   이해도 확인 퀴즈
+   ===================================================================== */
+var QUIZ = [
+  {
+    q: "Cas9가 DNA에서 가장 먼저 찾는 신호는 무엇일까요?",
+    o: ["gRNA와 똑같은 20글자", "PAM (NGG)", "세포막"],
+    a: 1,
+    why: "Cas9는 먼저 PAM(NGG)을 알아보고, 그다음 DNA를 풀어 gRNA와 글자가 맞는지 확인해요."
+  },
+  {
+    q: "NHEJ로 고쳐졌을 때 가장 흔하게 생기는 일은 무엇일까요?",
+    o: ["글자가 끼어들거나 빠지는 작은 실수", "설계도대로 정확하게 교정", "DNA가 저절로 원래대로 돌아감"],
+    a: 0,
+    why: "NHEJ는 끊어진 끝을 서둘러 이어 붙여서 글자가 끼거나 빠지는 실수가 잘 생겨요. 정확한 교정은 설계도(도너 DNA)를 쓰는 HDR의 역할이에요."
+  },
+  {
+    q: "gRNA와 글자가 조금 다른, 엉뚱한 곳이 잘리는 일을 무엇이라고 할까요?",
+    o: ["오프타깃", "프레임시프트", "시퀀싱"],
+    a: 0,
+    why: "원래 목표가 아닌 곳이 잘리는 것이 오프타깃이에요. 그래서 gRNA를 고를 때 안전성(MIT) 점수를 꼭 살펴봐요."
+  },
+  {
+    q: "편집이 정말 일어났는지 확인하려고 DNA 글자를 읽는 방법은 무엇일까요?",
+    o: ["전기천공", "시퀀싱", "리포펙션"],
+    a: 1,
+    why: "표적 부위를 PCR로 복사한 뒤 시퀀싱으로 글자를 읽어 원래 서열과 비교해요. 전기천공과 리포펙션은 RNP를 세포 안에 넣는 방법이에요."
+  }
+];
+
+function renderQuiz(){
+  var box = document.createElement("div");
+  box.className = "quiz";
+  var h = document.createElement("h2");
+  h.textContent = "이해도 확인 퀴즈 (" + QUIZ.length + "문제)";
+  box.appendChild(h);
+  var scoreEl = document.createElement("div");
+  scoreEl.className = "qscore";
+
+  QUIZ.forEach(function(item, qi){
+    var q = document.createElement("div");
+    q.className = "qq";
+    q.textContent = (qi + 1) + ". " + item.q;
+    box.appendChild(q);
+
+    var why = document.createElement("div");
+    why.className = "qwhy";
+    var btns = [];
+    item.o.forEach(function(text, oi){
+      var b = document.createElement("button");
+      b.className = "qopt";
+      b.textContent = text;
+      b.onclick = function(){
+        btns.forEach(function(x){ x.disabled = true; });
+        quizAnswered++;
+        if (oi === item.a){
+          b.classList.add("ok");
+          quizRight++;
+          why.textContent = "정답! " + item.why;
+        } else {
+          b.classList.add("no");
+          btns[item.a].classList.add("ok");
+          why.textContent = "아쉬워요. " + item.why;
+        }
+        if (quizAnswered === QUIZ.length){
+          scoreEl.textContent = "퀴즈 결과: " + quizRight + " / " + QUIZ.length + " 정답";
+        }
+      };
+      btns.push(b);
+      box.appendChild(b);
+    });
+    box.appendChild(why);
+  });
+  box.appendChild(scoreEl);
+  resEl.appendChild(box);
 }
 
 /* =====================================================================
