@@ -199,6 +199,26 @@ def cached_fetch(accession: str):
     """같은 번호를 반복해서 NCBI 에 요청하지 않도록 하루 동안 캐시"""
     return fetch_refseq_fasta(accession)
 
+def friendly_ncbi_error(e):
+    """NCBI 접속 오류를 학생도 이해할 수 있는 말로 바꿔 준다."""
+    import requests
+    if isinstance(e, requests.exceptions.Timeout):
+        return "NCBI 서버가 정해진 시간 안에 답하지 않았어요. 잠시 뒤에 다시 불러와 보세요."
+    if isinstance(e, requests.exceptions.ConnectionError):
+        return "NCBI 서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요."
+    if isinstance(e, requests.exceptions.HTTPError):
+        code = e.response.status_code if e.response is not None else None
+        if code == 429:
+            return "짧은 시간에 요청이 너무 많았어요. 1분쯤 기다린 뒤 다시 시도해 주세요."
+        if code in (400, 404):
+            return "NCBI에서 그 번호의 서열을 찾지 못했어요. RefSeq 번호가 맞는지 확인해 주세요."
+        if code is not None and code >= 500:
+            return "NCBI 서버에 일시적인 문제가 있어요. 잠시 뒤에 다시 시도해 주세요."
+        return "NCBI 서버가 오류를 돌려줬어요 (코드 %s)." % code
+    if isinstance(e, ValueError):
+        return str(e)
+    return "알 수 없는 문제가 생겼어요. 잠시 뒤에 다시 시도해 주세요."
+
 # -----------------------------------------------------------------------------
 # 6. PDF 생성용 헬퍼 함수 (임시 파일 없이 메모리에서 처리)
 # -----------------------------------------------------------------------------
@@ -409,8 +429,10 @@ if input_mode == MODE_NCBI:
             with st.spinner("NCBI에서 실제 서열을 불러오는 중입니다..."):
                 ref_header, ref_seq = cached_fetch(accession_used)
         except Exception as e:
-            st.error(f"NCBI에서 서열을 가져오지 못했습니다: {e}")
-            st.info("잠시 후 다시 시도하거나, 사이드바에서 '직접 입력 (연습용)'을 선택해 주세요.")
+            st.error("NCBI에서 서열을 가져오지 못했습니다.")
+            st.warning(friendly_ncbi_error(e))
+            st.button("🔄 다시 불러오기")
+            st.info("계속 안 되면 사이드바에서 '직접 입력 (연습용)'을 선택해 주세요.")
     else:
         st.info("👈 사이드바에 RefSeq 전사체 번호(예: NM_000518)를 입력해 주세요.")
 
