@@ -207,6 +207,8 @@ svg{width:100%;height:auto;display:block;border-radius:12px;background:#0a1620;t
 .qopt:disabled{cursor:default}
 .qwhy{font-size:13px;color:#bcd3e0;margin:4px 0 0;line-height:1.6}
 .qscore{margin-top:12px;font-weight:700}
+#report{width:100%;height:170px;margin-top:10px;background:#0a1620;color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:8px;font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:12px}
 
 @media (prefers-reduced-motion: reduce){
   .base,.base .t,.base .r{transition:none}
@@ -912,7 +914,10 @@ function showResult(){
   renderQuiz();
   setStep(7);
   setMsg("실습 완료! NHEJ와 HDR 결과가 어떻게 다른지 다시 해 보며 비교해 보세요.", "good");
-  setCtrl([{label: "처음부터 다시 하기", cls: "main", fn: build}]);
+  setCtrl([
+    {label: "📥 결과 저장 (.txt)", fn: saveReport},
+    {label: "처음부터 다시 하기", cls: "main", fn: build}
+  ]);
   resEl.scrollIntoView({behavior: "smooth", block: "nearest"});
 }
 
@@ -991,6 +996,72 @@ function renderQuiz(){
   });
   box.appendChild(scoreEl);
   resEl.appendChild(box);
+}
+
+/* =====================================================================
+   실습 결과 저장 (.txt)
+   ===================================================================== */
+function plainSeq(items){
+  return items.map(function(o){ return o.c; }).join("");
+}
+
+function buildReport(){
+  var NL = String.fromCharCode(10);
+  var score = Math.max(40, 100 - penalty * 10);
+  var L = [];
+  L.push("유전자 편집 실습 결과");
+  L.push("실습 날짜: " + new Date().toLocaleString("ko-KR"));
+  L.push("");
+  L.push("[표적]");
+  L.push("유전자: " + CFG.gene);
+  if (REAL) L.push("서열 출처: NCBI RefSeq " + CFG.accession + " (" + CFG.start + "-" + CFG.end + ")");
+  else L.push("서열 출처: 가상(예시) 서열");
+  L.push("gRNA 표적 서열(20글자): " + SP);
+  L.push("PAM: " + PAM);
+  L.push("");
+  L.push("[수리 경로와 결과]");
+  L.push("선택한 수리 경로: " + (pending.kind === "nhej" ? "NHEJ (비상동 말단 연결)" : "HDR (상동 재조합)"));
+  L.push(pending.title);
+  L.push("편집 전: " + plainSeq(pending.before));
+  L.push("편집 후: " + plainSeq(pending.after));
+  L.push("");
+  L.push("[점수]");
+  L.push("실습 점수: " + score + "점 (틀린 시도 " + penalty + "회)");
+  L.push("퀴즈: " + (quizAnswered ? (quizRight + " / " + QUIZ.length + " 정답") : "아직 풀지 않음"));
+  L.push("");
+  L.push("※ 이 결과는 교육용 시뮬레이션이며 실제 실험 결과가 아닙니다.");
+  return L.join(NL);
+}
+
+function saveReport(){
+  if (state !== "done" || !pending) return;
+  var text = buildReport();
+  var ok = false;
+  try {
+    var blob = new Blob([String.fromCharCode(0xFEFF) + text], {type: "text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "유전자편집_실습결과.txt";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){
+      URL.revokeObjectURL(a.href);
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 1000);
+    ok = true;
+  } catch (err) {
+    ok = false;
+  }
+  var box = document.getElementById("report");
+  if (!box){
+    box = document.createElement("textarea");
+    box.id = "report";
+    box.readOnly = true;
+    resEl.appendChild(box);
+  }
+  box.value = text;
+  setMsg(ok ? "결과 파일을 저장했어요. 저장되지 않았다면 아래 글상자의 내용을 복사해서 메모장에 붙여넣으세요."
+            : "저장 기능이 막혀 있어요. 아래 글상자의 내용을 복사해서 메모장에 붙여넣으세요.", "good");
 }
 
 /* =====================================================================
