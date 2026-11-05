@@ -14,6 +14,8 @@ NCBI_GENES = {
     "HBB (겸상적혈구빈혈증 관련 유전자)": {"symbol": "HBB", "accession": "NM_000518"},
     "BRCA1 (유방암/난소암 관련 유전자)": {"symbol": "BRCA1", "accession": "NM_007294"},
     "TP53 (암 억제 유전자)": {"symbol": "TP53", "accession": "NM_000546"},
+    "CFTR (낭포성 섬유증 관련 유전자)": {"symbol": "CFTR", "accession": "NM_000492"},
+    "PCSK9 (콜레스테롤 조절 유전자)": {"symbol": "PCSK9", "accession": "NM_174936"},
 }
 
 # 염색체 전체(NC_)처럼 아주 큰 서열을 실수로 받지 않도록 '전사체' 번호만 허용
