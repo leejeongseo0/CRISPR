@@ -177,6 +177,7 @@ def validate_grna(sequence: str):
             return False, "유효하지 않은 염기 포함"
     return True, "정상"
 
+# 교육용 간이 점수. 실제 MIT/Doench 알고리즘이 아니라 GC 함량으로 계산한 근사값이다.
 def calculate_scores(sequence: str):
     seq = sequence.strip().upper()
     gc_content = ((seq.count('G') + seq.count('C')) / 20) * 100
