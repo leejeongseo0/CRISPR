@@ -155,7 +155,7 @@ st.caption("※ 점수는 GC 함량 등을 이용한 교육용 간이 계산이�
 st.markdown("---")
 
 # -----------------------------------------------------------------------------
-# 4. 예시 데이터 세트 정의 (직접 입력 연습용)
+# 4. 예시 데이터 세트 정의 (예시 데이터 모용)
 # -----------------------------------------------------------------------------
 DATA_SAMPLES = {
     "HBB (겸상적혈구빈혈증 관련 유전자)": "HBB_1460_rev, GACACCAACTGTCAACTGAT\nHBB_1542_fw, CCTTGCCCCACAGGGCAGTA\nHBB_Exon1_A, CTTGCCCCACAGGGCAGTAA\nHBB_Exon1_B, TGGTCTACCCTTGGACCCAG\nHBB_Exon2_C, AGTCTGCCATCACTGCCCTG",
