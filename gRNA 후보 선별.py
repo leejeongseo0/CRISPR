@@ -432,7 +432,7 @@ if input_mode == MODE_NCBI:
             st.error("NCBI에서 서열을 가져오지 못했습니다.")
             st.warning(friendly_ncbi_error(e))
             st.button("🔄 다시 불러오기")
-            st.info("계속 안 되면 사이드바에서 '직접 입력 (연습용)'을 선택해 주세요.")
+            st.info("계속 안 되면 사이드바에서 '예시 데이'을 선택해 주세요.")
     else:
         st.info("👈 사이드바에 RefSeq 전사체 번호(예: NM_000518)를 입력해 주세요.")
 
