@@ -150,6 +150,7 @@ h1{font-size:20px;margin:0;font-weight:700}
 #explain h3{margin:0 0 6px;font-size:16px}
 #explain h3.sub{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 #explain p{margin:6px 0;font-size:14px;line-height:1.7}
+#explain p.sum{background:#183247;border-left:3px solid var(--cas);padding:8px 12px;border-radius:6px}
 #explain .real{color:#bcd3e0}
 
 svg{width:100%;height:auto;display:block;border-radius:12px;background:#0a1620;touch-action:none;user-select:none}
@@ -195,6 +196,19 @@ svg{width:100%;height:auto;display:block;border-radius:12px;background:#0a1620;t
 .seq .m{background:var(--rna);color:#2a1700;border-radius:2px}
 .seq .del{background:var(--bad);color:#2a0008;border-radius:2px}
 .lbl{font-size:12px;color:var(--mute);margin-top:8px}
+.quiz{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.quiz h2{margin:0 0 4px;font-size:17px}
+.qq{margin:14px 0 6px;font-size:14px;font-weight:700;line-height:1.55}
+.qopt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;border:1px solid var(--line);
+  background:#0f2433;color:var(--ink);border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
+.qopt:hover{border-color:var(--dna1)}
+.qopt.ok{border-color:var(--cas);background:#123a2b}
+.qopt.no{border-color:var(--bad);background:#3a1620}
+.qopt:disabled{cursor:default}
+.qwhy{font-size:13px;color:#bcd3e0;margin:4px 0 0;line-height:1.6}
+.qscore{margin-top:12px;font-weight:700}
+#report{width:100%;height:170px;margin-top:10px;background:#0a1620;color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:8px;font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:12px}
 
 @media (prefers-reduced-motion: reduce){
   .base,.base .t,.base .r{transition:none}
@@ -252,37 +266,44 @@ var CFG = __CONFIG__;
 var EXPLAIN = [
   {
     t: "1단계. 고칠 곳(표적) 찾기",
-    easy: "유전자는 A, T, G, C 네 글자로 쓰인 아주 긴 글이에요. 책에서 틀린 글자를 고치려면 먼저 그 쪽수와 줄을 찾아야 하죠. 유전자 편집도 같아요. gRNA에 적힌 20글자와 똑같은 곳을 DNA에서 찾고, 그 바로 뒤에 N-G-G(아무 글자 하나 + GG)가 있는지 확인합니다. 이 NGG를 PAM이라고 부르고, Cas9가 가위질을 시작하는 신호 역할을 해요.",
+    sum: "gRNA와 똑같은 20글자를 찾고, 그 바로 뒤에 NGG가 있는지 확인해요.",
+    easy: "DNA는 A, T, G, C 네 글자로 쓰인 아주 긴 글이에요. 책에서 틀린 글자를 고치려면 먼저 몇 쪽 몇 째 줄인지 찾아야 하죠? 유전자 편집도 똑같아요. 먼저 gRNA(어디를 자를지 알려 주는 길잡이 RNA)에 적힌 20글자와 똑같은 곳을 DNA에서 찾아요. 그다음 바로 뒤에 N-G-G(아무 글자 하나 + G + G)가 있는지 확인해요. 이 NGG를 PAM이라고 부르는데, Cas9 가위에게 '여기를 잘라도 돼!' 하고 알려 주는 표지판이에요.",
     real: "연구자는 컴퓨터 프로그램으로 표적 주변의 PAM을 모두 찾고, 후보 gRNA를 여러 개 설계합니다. 이때 엉뚱한 곳을 자를 위험(오프타깃)이 낮은지(MIT 점수), 표적을 잘 자르는지(Doench 점수)를 비교해 가장 좋은 gRNA를 고릅니다. 1페이지의 스크리닝이 바로 이 과정이에요."
   },
   {
     t: "2단계. Cas9와 gRNA를 합쳐 RNP 만들기",
-    easy: "Cas9는 DNA를 자르는 가위 단백질이고, gRNA는 어디를 자를지 알려 주는 길잡이(내비게이션)예요. 가위 혼자서는 어디를 잘라야 할지 모르고, 길잡이 혼자서는 자를 수 없어요. 둘이 합쳐진 덩어리를 RNP(리보핵산단백질 복합체)라고 해요. RNA에서는 T 대신 U가 쓰이는 점도 기억해 두세요.",
+    sum: "가위(Cas9)와 길잡이(gRNA)를 합쳐서 한 팀(RNP)으로 만들어요.",
+    easy: "Cas9는 DNA를 자르는 가위 단백질이고, gRNA는 어디를 자를지 알려 주는 내비게이션이에요. 가위만 있으면 어디를 잘라야 할지 모르고, 내비게이션만 있으면 자를 수가 없어요. 그래서 둘을 합쳐요. 합친 덩어리를 RNP라고 불러요. 참고로 RNA에는 T 대신 U라는 글자가 들어 있어요.",
     real: "정제한 Cas9 단백질과 합성한 gRNA를 시험관에서 섞고 실온에서 10~20분 정도 두면 RNP가 만들어집니다. 이렇게 미리 조립한 RNP를 쓰면 세포 안에서 빨리 작동하고 금방 분해되어, 엉뚱한 곳을 자를 가능성이 줄어드는 장점이 있습니다."
   },
   {
     t: "3단계. RNP를 세포 안으로 전달하기",
-    easy: "세포는 얇은 막으로 둘러싸여 있어서 RNP가 저절로 들어가지 못해요. 문이 닫힌 집에 택배를 넣어 주는 것과 비슷해서, 들여보내는 방법이 따로 필요합니다. 세포 안에 들어온 Cas9는 몸에 붙어 있는 핵 신호(NLS, 핵으로 들어가는 출입증) 덕분에 DNA가 있는 핵 안까지 들어갈 수 있어요.",
+    sum: "세포막이라는 문을 통과시켜 RNP를 세포 안으로 넣어요.",
+    easy: "세포는 얇은 막으로 둘러싸여 있어서 RNP가 저절로 들어가지 못해요. 문이 잠긴 집에 택배를 넣어 주려면 방법이 필요하죠. 전기로 막에 잠깐 구멍을 내는 전기천공, 지방 방울로 감싸서 보내는 리포펙션, 아주 가는 유리 바늘로 직접 넣는 미세주입이 있어요. 세포 안에 들어온 Cas9에는 핵으로 들어가는 출입증(NLS)이 붙어 있어서, DNA가 있는 핵까지 갈 수 있어요.",
     real: "전기천공(짧은 전기 자극으로 막에 잠깐 구멍을 냄), 리포펙션(지방 방울로 감싸 막과 합침), 미세주입(아주 가는 유리 바늘로 직접 넣음) 같은 방법을 씁니다. 몸속에서 치료할 때는 무해하게 만든 바이러스(AAV 등)에 실어 보내는 연구도 있어요."
   },
   {
     t: "4단계. 표적에 결합하기",
-    easy: "Cas9는 DNA 위를 돌아다니며 PAM(NGG)부터 찾아요. PAM을 만나면 멈춰서 DNA 두 가닥을 살짝 풀고, 그 틈에서 gRNA가 아래 가닥과 글자가 맞는지 하나씩 확인해요. A-T, G-C처럼 짝이 맞으면 단단히 붙고, 많이 틀리면 떨어져 나가요. 그래서 PAM과 20글자가 둘 다 맞는 곳에만 결합합니다.",
+    sum: "Cas9가 PAM을 찾아 멈추고, gRNA가 글자가 맞는지 확인해요.",
+    easy: "Cas9는 DNA 위를 돌아다니며 먼저 PAM(NGG)부터 찾아요. PAM을 만나면 멈춰서 DNA 두 가닥을 살짝 풀어요. 그 틈에서 gRNA가 아래쪽 가닥과 글자가 맞는지 하나씩 확인해요. A는 T와, G는 C와 짝이 되는 퍼즐 같은 거예요. 짝이 잘 맞으면 단단히 붙고, 많이 틀리면 떨어져 나가요. 그래서 PAM과 20글자가 둘 다 맞는 곳에만 붙어요.",
     real: "풀린 DNA 가닥과 gRNA가 짝을 이룬 구조를 R-loop라고 합니다. 글자가 한두 개 틀려도 붙는 경우가 있는데, 이것이 원하지 않는 곳이 잘리는 오프타깃의 원인이에요. 그래서 gRNA를 고를 때 비슷한 서열이 게놈에 또 있는지 꼭 확인합니다."
   },
   {
     t: "5단계. DNA 자르기",
-    easy: "결합이 끝나면 Cas9의 가위 부위 두 곳(HNH와 RuvC)이 DNA 두 가닥을 각각 잘라요. 위치는 PAM에서 3글자 앞이에요. 두 가닥이 모두 끊어진 것을 이중가닥절단(DSB)이라고 합니다. 세포 입장에서는 DNA가 끊어진 비상 상황이라서 곧바로 고치기 시작해요.",
+    sum: "Cas9의 가위 두 곳이 DNA 두 가닥을 모두 잘라요.",
+    easy: "결합이 끝나면 Cas9의 가위 부분 두 곳(HNH, RuvC)이 DNA의 두 가닥을 각각 잘라요. 자르는 자리는 PAM에서 3글자 앞이에요. 두 가닥이 모두 끊어진 것을 이중가닥절단(DSB)이라고 해요. 세포에게는 'DNA가 끊어졌다!' 하는 비상 상황이라서 곧바로 고치기 시작해요.",
     real: "SpCas9는 대부분 두 가닥을 같은 자리에서 끊어 평평한 끝(평활 말단)을 만듭니다. 이 단계까지는 DNA를 자르기만 했을 뿐, 어떻게 바뀌는지는 이어지는 세포의 수리 방식이 결정해요."
   },
   {
     t: "6단계. 세포의 수리 (NHEJ 또는 HDR)",
-    easy: "끊어진 DNA는 세포가 스스로 고쳐요. NHEJ는 끊어진 두 끝을 급하게 이어 붙이는 방법이라, 그 과정에서 글자가 끼어들거나 빠지는 실수가 잘 생겨요. 이 실수 때문에 유전자가 제대로 읽히지 않으면 유전자 기능이 꺼집니다(녹아웃). HDR는 우리가 설계도(도너 DNA)를 함께 주면 그대로 베껴서 정확하게 고쳐 써요. 책의 틀린 글자를 지우개로 지우고 정답을 써 넣는 것과 비슷합니다.",
+    sum: "끊어진 DNA를 세포가 스스로 이어 붙이거나 고쳐 써요.",
+    easy: "끊어진 DNA는 세포가 스스로 고쳐요. NHEJ는 끊어진 두 끝을 서둘러 이어 붙이는 방법이에요. 급하게 붙이다 보니 글자가 끼어들거나 빠지는 실수가 잘 생겨요. 이 실수 때문에 유전자가 제대로 읽히지 않으면 그 유전자의 기능이 꺼지는데, 이것을 녹아웃이라고 해요. HDR는 우리가 설계도(도너 DNA)를 함께 주면 그대로 베껴서 정확하게 고쳐 써요. 책에서 틀린 글자를 지우개로 지우고 정답을 써 넣는 것과 비슷해요.",
     real: "세포가 분열을 준비하는 시기에 주로 일어나는 HDR는 NHEJ보다 효율이 훨씬 낮은 편이에요. 또 같은 시험관 속 세포라도 세포마다 수리 결과가 달라서, 실제로는 여러 종류의 결과가 섞여 나옵니다."
   },
   {
     t: "7단계. 편집이 잘 됐는지 확인하기",
-    easy: "DNA 글자 하나가 바뀐 것은 눈으로 볼 수 없어요. 그래서 표적 부위의 DNA를 PCR로 아주 많이 복사한 다음, 글자를 하나씩 읽어(시퀀싱) 원래 서열과 비교합니다. 이렇게 해야 편집이 일어났는지, 어떻게 바뀌었는지 알 수 있어요.",
+    sum: "DNA 글자를 읽어서(시퀀싱) 정말 바뀌었는지 확인해요.",
+    easy: "DNA 글자 하나가 바뀐 것은 눈으로 볼 수 없어요. 그래서 표적 부위의 DNA를 PCR로 아주 많이 복사한 다음, 글자를 하나씩 읽어요. 이것을 시퀀싱이라고 해요. 읽은 결과를 원래 서열과 나란히 놓고 비교하면, 편집이 일어났는지와 어떻게 바뀌었는지 알 수 있어요.",
     real: "샌거 시퀀싱이나 차세대 시퀀싱(NGS)으로 편집된 세포의 비율(편집 효율)을 계산합니다. 안전성을 위해 오프타깃으로 예상되는 다른 위치도 함께 읽어서 원치 않는 변화가 없는지 검사해요."
   }
 ];
@@ -387,6 +408,7 @@ function removeLater(node, ms){
 
 /* ---------- 상태 ---------- */
 var state, penalty, cur = 0, pending = null;
+var quizRight = 0, quizAnswered = 0;
 var cas, gr, gDNA, cutLine, hintEl, protoBox, pamBox, pamLbl, scanner, banner, bases;
 var explainMode = "";   // "", "step", "all"
 
@@ -420,12 +442,12 @@ function renderExplain(){
   var html = "";
   if (explainMode === "step"){
     var e = EXPLAIN[Math.min(cur, EXPLAIN.length - 1)];
-    html = "<h3>" + e.t + "</h3><p>" + e.easy + "</p><p class='real'><b>실제 실험에서는</b> " + e.real + "</p>";
+    html = "<h3>" + e.t + "</h3><p class='sum'><b>한 줄 요약</b> " + e.sum + "</p><p>" + e.easy + "</p><p class='real'><b>실제 실험에서는</b> " + e.real + "</p>";
     btnExplain.textContent = "📖 설명 닫기";
     btnAll.textContent = "🗂 전체 과정 한눈에 보기";
   } else {
     EXPLAIN.forEach(function(e, i){
-      html += "<h3" + (i ? " class='sub'" : "") + ">" + e.t + "</h3><p>" + e.easy +
+      html += "<h3" + (i ? " class='sub'" : "") + ">" + e.t + "</h3><p class='sum'><b>한 줄 요약</b> " + e.sum + "</p><p>" + e.easy +
               "</p><p class='real'><b>실제 실험에서는</b> " + e.real + "</p>";
     });
     btnExplain.textContent = "📖 이 단계 설명 보기";
@@ -459,7 +481,7 @@ function build(){
   Array.prototype.slice.call(svg.children).forEach(function(c){
     if (c.tagName.toLowerCase() !== "defs") svg.removeChild(c);
   });
-  state = "find"; penalty = 0; bases = []; pending = null;
+  state = "find"; penalty = 0; bases = []; pending = null; quizRight = 0; quizAnswered = 0;
   resEl.innerHTML = "";
   svg.classList.add("finding");
 
@@ -817,8 +839,8 @@ function doCut(){
     setStep(5);
     setMsg("DNA 두 가닥이 모두 끊어졌어요(이중가닥절단, DSB). PAM에서 3글자 앞이 잘렸습니다. 세포는 곧 수리를 시작해요. 어떤 방법으로 고쳐지게 할까요?", "good");
     setCtrl([
-      {label: "NHEJ (급하게 이어 붙이기)", cls: "main", fn: function(){ repair("nhej"); }},
-      {label: "HDR (설계도를 보고 정확히 고치기)", fn: function(){ repair("hdr"); }}
+      {label: "NHEJ:비상동 말단 연결 (급하게 이어 붙이기)", cls: "main", fn: function(){ repair("nhej"); }},
+      {label: "HDR:상동인도복구 (설계도를 보고 정확히 고치기)", fn: function(){ repair("hdr"); }}
     ]);
   }, 1300);
 }
@@ -889,10 +911,157 @@ function showResult(){
     "<p>" + pending.body + "</p>" +
     "<p>실제 연구에서는 이 결과를 바탕으로 편집된 세포의 비율(편집 효율)을 계산하고, 엉뚱한 곳이 바뀌지 않았는지(오프타깃)도 함께 검사합니다.</p>" +
     "<p><b>실습 점수 " + score + "점</b> · 틀린 시도 " + penalty + "회 · " + grade + "</p></div>";
+  renderQuiz();
   setStep(7);
   setMsg("실습 완료! NHEJ와 HDR 결과가 어떻게 다른지 다시 해 보며 비교해 보세요.", "good");
-  setCtrl([{label: "처음부터 다시 하기", cls: "main", fn: build}]);
+  setCtrl([
+    {label: "📥 결과 저장 (.txt)", fn: saveReport},
+    {label: "처음부터 다시 하기", cls: "main", fn: build}
+  ]);
   resEl.scrollIntoView({behavior: "smooth", block: "nearest"});
+}
+
+/* =====================================================================
+   이해도 확인 퀴즈
+   ===================================================================== */
+var QUIZ = [
+  {
+    q: "Cas9가 DNA에서 가장 먼저 찾는 신호는 무엇일까요?",
+    o: ["gRNA와 똑같은 20글자", "PAM (NGG)", "세포막"],
+    a: 1,
+    why: "Cas9는 먼저 PAM(NGG)을 알아보고, 그다음 DNA를 풀어 gRNA와 글자가 맞는지 확인해요."
+  },
+  {
+    q: "NHEJ로 고쳐졌을 때 가장 흔하게 생기는 일은 무엇일까요?",
+    o: ["글자가 끼어들거나 빠지는 작은 실수", "설계도대로 정확하게 교정", "DNA가 저절로 원래대로 돌아감"],
+    a: 0,
+    why: "NHEJ는 끊어진 끝을 서둘러 이어 붙여서 글자가 끼거나 빠지는 실수가 잘 생겨요. 정확한 교정은 설계도(도너 DNA)를 쓰는 HDR의 역할이에요."
+  },
+  {
+    q: "gRNA와 글자가 조금 다른, 엉뚱한 곳이 잘리는 일을 무엇이라고 할까요?",
+    o: ["오프타깃", "프레임시프트", "시퀀싱"],
+    a: 0,
+    why: "원래 목표가 아닌 곳이 잘리는 것이 오프타깃이에요. 그래서 gRNA를 고를 때 안전성(MIT) 점수를 꼭 살펴봐요."
+  },
+  {
+    q: "편집이 정말 일어났는지 확인하려고 DNA 글자를 읽는 방법은 무엇일까요?",
+    o: ["전기천공", "시퀀싱", "리포펙션"],
+    a: 1,
+    why: "표적 부위를 PCR로 복사한 뒤 시퀀싱으로 글자를 읽어 원래 서열과 비교해요. 전기천공과 리포펙션은 RNP를 세포 안에 넣는 방법이에요."
+  }
+];
+
+function renderQuiz(){
+  var box = document.createElement("div");
+  box.className = "quiz";
+  var h = document.createElement("h2");
+  h.textContent = "이해도 확인 퀴즈 (" + QUIZ.length + "문제)";
+  box.appendChild(h);
+  var scoreEl = document.createElement("div");
+  scoreEl.className = "qscore";
+
+  QUIZ.forEach(function(item, qi){
+    var q = document.createElement("div");
+    q.className = "qq";
+    q.textContent = (qi + 1) + ". " + item.q;
+    box.appendChild(q);
+
+    var why = document.createElement("div");
+    why.className = "qwhy";
+    var btns = [];
+    item.o.forEach(function(text, oi){
+      var b = document.createElement("button");
+      b.className = "qopt";
+      b.textContent = text;
+      b.onclick = function(){
+        btns.forEach(function(x){ x.disabled = true; });
+        quizAnswered++;
+        if (oi === item.a){
+          b.classList.add("ok");
+          quizRight++;
+          why.textContent = "정답! " + item.why;
+        } else {
+          b.classList.add("no");
+          btns[item.a].classList.add("ok");
+          why.textContent = "아쉬워요. " + item.why;
+        }
+        if (quizAnswered === QUIZ.length){
+          scoreEl.textContent = "퀴즈 결과: " + quizRight + " / " + QUIZ.length + " 정답";
+        }
+      };
+      btns.push(b);
+      box.appendChild(b);
+    });
+    box.appendChild(why);
+  });
+  box.appendChild(scoreEl);
+  resEl.appendChild(box);
+}
+
+/* =====================================================================
+   실습 결과 저장 (.txt)
+   ===================================================================== */
+function plainSeq(items){
+  return items.map(function(o){ return o.c; }).join("");
+}
+
+function buildReport(){
+  var NL = String.fromCharCode(10);
+  var score = Math.max(40, 100 - penalty * 10);
+  var L = [];
+  L.push("유전자 편집 실습 결과");
+  L.push("실습 날짜: " + new Date().toLocaleString("ko-KR"));
+  L.push("");
+  L.push("[표적]");
+  L.push("유전자: " + CFG.gene);
+  if (REAL) L.push("서열 출처: NCBI RefSeq " + CFG.accession + " (" + CFG.start + "-" + CFG.end + ")");
+  else L.push("서열 출처: 가상(예시) 서열");
+  L.push("gRNA 표적 서열(20글자): " + SP);
+  L.push("PAM: " + PAM);
+  L.push("");
+  L.push("[수리 경로와 결과]");
+  L.push("선택한 수리 경로: " + (pending.kind === "nhej" ? "NHEJ (비상동 말단 연결)" : "HDR (상동 재조합)"));
+  L.push(pending.title);
+  L.push("편집 전: " + plainSeq(pending.before));
+  L.push("편집 후: " + plainSeq(pending.after));
+  L.push("");
+  L.push("[점수]");
+  L.push("실습 점수: " + score + "점 (틀린 시도 " + penalty + "회)");
+  L.push("퀴즈: " + (quizAnswered ? (quizRight + " / " + QUIZ.length + " 정답") : "아직 풀지 않음"));
+  L.push("");
+  L.push("※ 이 결과는 교육용 시뮬레이션이며 실제 실험 결과가 아닙니다.");
+  return L.join(NL);
+}
+
+function saveReport(){
+  if (state !== "done" || !pending) return;
+  var text = buildReport();
+  var ok = false;
+  try {
+    var blob = new Blob([String.fromCharCode(0xFEFF) + text], {type: "text/plain;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "유전자편집_실습결과.txt";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){
+      URL.revokeObjectURL(a.href);
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 1000);
+    ok = true;
+  } catch (err) {
+    ok = false;
+  }
+  var box = document.getElementById("report");
+  if (!box){
+    box = document.createElement("textarea");
+    box.id = "report";
+    box.readOnly = true;
+    resEl.appendChild(box);
+  }
+  box.value = text;
+  setMsg(ok ? "결과 파일을 저장했어요. 저장되지 않았다면 아래 글상자의 내용을 복사해서 메모장에 붙여넣으세요."
+            : "저장 기능이 막혀 있어요. 아래 글상자의 내용을 복사해서 메모장에 붙여넣으세요.", "good");
 }
 
 /* =====================================================================

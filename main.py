@@ -26,8 +26,8 @@ from ncbi_utils import NCBI_GENES, fetch_refseq_fasta, find_candidates
 LAB_PAGE_PATH = "pages/2_실습실.py"
 
 MODE_NCBI = "🧬 NCBI 실제 서열로 설계"
-MODE_MANUAL = "✍️ 직접 입력 (연습용)"
-CUSTOM_LABEL = "직접 번호 입력 (RefSeq)"
+MODE_MANUAL = "예시 데이터"
+CUSTOM_LABEL = "✍️직접 입력"
 
 # -----------------------------------------------------------------------------
 # 1. 페이지 기본 설정
@@ -39,7 +39,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# 2. 연핑크 배경 & Custom CSS
+# 2. 남색 배경 & Custom CSS
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
