@@ -484,7 +484,7 @@ if input_mode == MODE_NCBI:
             )
             ready = True
 
-else:  # 직접 입력 (연습용)
+else:  # 예시 데이터 (연습용)
     if "grna_input_text_area" not in st.session_state:
         st.session_state["grna_input_text_area"] = DATA_SAMPLES["HBB (겸상적혈구빈혈증 관련 유전자)"]
         st.session_state["current_gene_name"] = "HBB (겸상적혈구빈혈증 관련 유전자)"
