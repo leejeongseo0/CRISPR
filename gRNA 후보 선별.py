@@ -26,8 +26,8 @@ from ncbi_utils import NCBI_GENES, fetch_refseq_fasta, find_candidates
 LAB_PAGE_PATH = "pages/2_실습실.py"
 
 MODE_NCBI = "🧬 NCBI 실제 서열로 설계"
-MODE_MANUAL = "✍️ 직접 입력 (연습용)"
-CUSTOM_LABEL = "직접 번호 입력 (RefSeq)"
+MODE_MANUAL = "예시 데이터"
+CUSTOM_LABEL = "✍️직접 입력"
 
 # -----------------------------------------------------------------------------
 # 1. 페이지 기본 설정
@@ -155,7 +155,7 @@ st.caption("※ 점수는 GC 함량 등을 이용한 교육용 간이 계산이�
 st.markdown("---")
 
 # -----------------------------------------------------------------------------
-# 4. 예시 데이터 세트 정의 (직접 입력 연습용)
+# 4. 예시 데이터 세트 정의 (예시 데이터 모용)
 # -----------------------------------------------------------------------------
 DATA_SAMPLES = {
     "HBB (겸상적혈구빈혈증 관련 유전자)": "HBB_1460_rev, GACACCAACTGTCAACTGAT\nHBB_1542_fw, CCTTGCCCCACAGGGCAGTA\nHBB_Exon1_A, CTTGCCCCACAGGGCAGTAA\nHBB_Exon1_B, TGGTCTACCCTTGGACCCAG\nHBB_Exon2_C, AGTCTGCCATCACTGCCCTG",
@@ -432,7 +432,7 @@ if input_mode == MODE_NCBI:
             st.error("NCBI에서 서열을 가져오지 못했습니다.")
             st.warning(friendly_ncbi_error(e))
             st.button("🔄 다시 불러오기")
-            st.info("계속 안 되면 사이드바에서 '직접 입력 (연습용)'을 선택해 주세요.")
+            st.info("계속 안 되면 사이드바에서 '예시 데이'을 선택해 주세요.")
     else:
         st.info("👈 사이드바에 RefSeq 전사체 번호(예: NM_000518)를 입력해 주세요.")
 
@@ -484,7 +484,7 @@ if input_mode == MODE_NCBI:
             )
             ready = True
 
-else:  # 직접 입력 (연습용)
+else:  # 예시 데이터 (연습용)
     if "grna_input_text_area" not in st.session_state:
         st.session_state["grna_input_text_area"] = DATA_SAMPLES["HBB (겸상적혈구빈혈증 관련 유전자)"]
         st.session_state["current_gene_name"] = "HBB (겸상적혈구빈혈증 관련 유전자)"
